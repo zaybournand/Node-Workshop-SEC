@@ -29,7 +29,7 @@ A simple CRUD API built with **Node.js + Express**, paired with a lightweight HT
 
 #### 1. Clone the repository and navigate into the project directory:
 
-- git clone https://github.com/zaybournand/Node-Workshop-Node.git
+- git clone https://github.com/zaybournand/Node-Workshop-SEC.git
 - cd Node-Workshop-SEC
 
 #### 2. Install Dependencies:
