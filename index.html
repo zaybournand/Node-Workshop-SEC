@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Notes</title>
+
+  <style>
+    * {
+      font-family: sans-serif;
+    }
+
+    button {
+      background-color: black;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    input {
+      padding: 5px;
+      border: 1px solid black;
+      border-radius: 5px;
+      margin-left: 5px;
+    }
+
+    .section {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid black;
+      width: 80%;
+    }
+
+    #notes-display {
+      margin-top: 10px;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Mini Notes App</h1>
+
+  <!-- GET ALL NOTES -->
+  <div class="section">
+    <h3>Get All Notes</h3>
+    <button id="all-notes-btn">Show Notes</button>
+    <div id="notes-display">Notes will appear here...</div>
+  </div>
+
+  <!-- GET NOTE BY ID -->
+  <div class="section">
+    <h3>Get Note by ID</h3>
+    <input id="get-id-input" type="number" min="0" placeholder="ID" />
+    <button id="get-id-btn">Get Note</button>
+    <div id="single-note-display"></div>
+  </div>
+
+  <!-- ADD NOTE -->
+  <div class="section">
+    <h3>Add New Note</h3>
+    <input id="new-note-input" type="text" placeholder="Write a note..." />
+    <button id="add-note-btn">Add Note</button>
+  </div>
+
+  <!-- UPDATE NOTE -->
+  <div class="section">
+    <h3>Update Note</h3>
+    <input id="update-id-input" type="number" min="0" placeholder="ID" />
+    <input id="update-text-input" type="text" placeholder="New text..." />
+    <button id="update-note-btn">Update</button>
+  </div>
+
+  <!-- DELETE NOTE -->
+  <div class="section">
+    <h3>Delete Note</h3>
+    <input id="delete-id-input" type="number" min="0" placeholder="ID" />
+    <button id="delete-note-btn">Delete</button>
+  </div>
+
+  <script>
+    const API = "http://localhost:3000";
+
+    // GET ALL NOTES
+    document.getElementById("all-notes-btn").addEventListener("click", async () => {
+      let res = await fetch(`${API}/notes`);
+      let data = await res.json();
+
+      let formatted = data.map((note, i) => `${i}: ${note}`).join("\n");
+      document.getElementById("notes-display").innerText = formatted || "No notes yet!";
+    });
+
+    // GET NOTE BY ID
+    document.getElementById("get-id-btn").addEventListener("click", async () => {
+      let id = document.getElementById("get-id-input").value;
+      let res = await fetch(`${API}/notes/${id}`);
+
+      if (res.status !== 200) {
+        document.getElementById("single-note-display").innerText = "Note not found!";
+      } else {
+        let text = await res.text();
+        document.getElementById("single-note-display").innerText = text;
+      }
+    });
+
+    // ADD NOTE
+    document.getElementById("add-note-btn").addEventListener("click", async () => {
+      let text = document.getElementById("new-note-input").value;
+
+      let res = await fetch(`${API}/notes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+
+      let msg = await res.text();
+      alert(msg);
+    });
+
+    // UPDATE NOTE
+    document.getElementById("update-note-btn").addEventListener("click", async () => {
+      let id = document.getElementById("update-id-input").value;
+      let text = document.getElementById("update-text-input").value;
+
+      let res = await fetch(`${API}/notes/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+
+      let msg = await res.text();
+      alert(msg);
+    });
+
+    // DELETE NOTE
+    document.getElementById("delete-note-btn").addEventListener("click", async () => {
+      let id = document.getElementById("delete-id-input").value;
+
+      let res = await fetch(`${API}/notes/${id}`, {
+        method: "DELETE"
+      });
+
+      let msg = await res.text();
+      alert(msg);
+    });
+  </script>
+
+</body>
+</html>
